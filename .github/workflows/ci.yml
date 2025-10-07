@@ -27,7 +27,14 @@ jobs:
       run: |
         PKG_VERSION=$(node -p "require('./package.json').version")
         echo "PKG_VERSION=$PKG_VERSION" >> $GITHUB_OUTPUT
-
+    - name: Trivy scan
+      uses: aquasecurity/trivy-action@0.24.0
+      with:
+        scan-type: image
+        image-ref: ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.IMAGE_NAME }}:latest
+        vuln-type: 'os,library'
+        severity: 'CRITICAL,HIGH'
+        
   docker:
     needs: build-test
     runs-on: ubuntu-latest
